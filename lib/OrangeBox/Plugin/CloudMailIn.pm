@@ -38,6 +38,7 @@ sub register {
     $forward->{to} =~ s/^($secret.*)\@.+$/$1/ or return undef;
     my @relay = split /\+/, $forward->{to};
     $relay[1] ||= $app->config->{relay}->{default} if $app->mode ne 'production';
+    return undef unless $relay[1];
     $forward->{to} = join('+', @relay[1,0,2..$#relay]).'@'.$app->config->{relay}->{domain};
 
     return $c->minion->enqueue('store_and_forward', [$store, $forward]);
