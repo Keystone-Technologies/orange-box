@@ -1,6 +1,10 @@
 package OrangeBox::Task::StoreAndForward;
 use Mojo::Base 'Mojolicious::Plugin';
 
+use Mojo::UserAgent;
+
+has ua => sub { Mojo::UserAgent->new };
+
 sub register {
   my ($self, $app, $conf) = @_;
 
@@ -18,6 +22,9 @@ sub register {
     #warn "$log\n";                            # stderr
     $job->app->app->log->info($log);          # App log
     $job->app->syslog("info", $log);          # Syslog
+    $self->ua->post(                          # Loggly
+      "http://logs-01.loggly.com/inputs/4c762b87-c50c-4dbb-9df6-3ad91d865ad7/tag/orangebox,$forward->{to}/" => json => $store
+    );
     $job->app->pg->pubsub->notify(            # Webbrowser
       events => qq(<a href="/incoming/$id/view">$log</a>), # TODO: pass JSON instead
     );
