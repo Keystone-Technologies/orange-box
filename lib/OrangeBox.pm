@@ -43,7 +43,7 @@ sub startup {
 
   # Normal route to controller
   $r->get('/incoming/:id/view')->to('incoming#view')->name('view_incoming');
-  $r->get('/incoming/test/:to')->to('incoming#store_and_forward');
+  $r->get('/incoming/test/#to')->to('incoming#store_and_forward');
   $r->post('/incoming')->to('incoming#store_and_forward');
 }
 
