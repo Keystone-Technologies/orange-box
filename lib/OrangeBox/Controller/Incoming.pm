@@ -11,7 +11,7 @@ sub view {
 sub store_and_forward {
   my $self = shift;
 
-  $self->render(json => {err => 'ok', job => $self->do_store_and_forward});
+  $self->render(json => {err => 'ok', job => $self->do_store_and_forward->info});
 }
 
 1;

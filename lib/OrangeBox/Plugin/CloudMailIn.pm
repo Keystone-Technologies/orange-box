@@ -37,11 +37,13 @@ sub register {
     my $secret = $app->secrets->[0];
     $forward->{to} =~ s/^($secret.*)\@.+$/$1/ or return undef;
     my @relay = split /\+/, $forward->{to};
-    $relay[1] ||= $app->config->{relay}->{default} if $app->mode ne 'production';
-    return undef unless $relay[1];
-    $forward->{to} = join('+', @relay[1,0,2..$#relay]).'@'.$app->config->{relay}->{domain};
+    shift @relay;
+    $relay[0] ||= $app->config->{relay}->{default} if $app->mode ne 'production';
+    return undef unless $relay[0];
+    $forward->{to} = join('+', @relay).'@'.$app->config->{relay}->{domain};
+    #$forward->{to} = join('+', @relay[1,0,2..$#relay]).'@'.$app->config->{relay}->{domain};
 
-    return $c->minion->enqueue('store_and_forward', [$store, $forward]);
+    return $c->minion->job($c->minion->enqueue('store_and_forward', [$store, $forward]));
   });
 }
 

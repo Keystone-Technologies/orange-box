@@ -37,14 +37,15 @@ sub startup {
   # Router
   my $r = $self->routes;
 
-  # Normal route to controller
-  $r->get('/')->to('events#index');
   $r->websocket('/watch')->to('events#watch');
 
   # Normal route to controller
   $r->get('/incoming/:id/view')->to('incoming#view')->name('view_incoming');
   $r->get('/incoming/test/#to')->to('incoming#store_and_forward');
   $r->post('/incoming')->to('incoming#store_and_forward');
+
+  # Normal route to controller
+  $r->get('/:number' => {number => '10'})->to('events#index');
 }
 
 1;

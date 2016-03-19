@@ -1,11 +1,12 @@
+%= javascript '/js/reconnecting-websocket.min.js'
 <form onsubmit="sendChat(this.children[0]); return false"><input></form>
 <div id="log">
-% for my $event ( @{$self->model->events->tail(20)} ) {
+% for my $event ( @{$self->model->events->tail(param 'number')} ) {
 <p><a href="<%= url_for 'view_incoming', {id => $event->{id}} %>"><%= $event->{log} %></p>
 % }
 </div>
 <script>
-  var ws  = new WebSocket('<%= url_for('watch')->to_abs %>');
+  var ws  = new ReconnectingWebSocket('<%= url_for('watch')->to_abs %>');
   ws.onmessage = function (e) {
     document.getElementById('log').innerHTML += '<p>' + e.data + '</p>';
   };

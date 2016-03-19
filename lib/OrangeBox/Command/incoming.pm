@@ -16,12 +16,12 @@ sub run {
 
   die "TODO" unless $to && $from && $subject;
 
-  say $self->app->do_store_and_forward({
+  say $self->app->dumper($self->app->do_store_and_forward({
     to => $to,
     from => $from,
     subject => $subject,
     data => join '', <STDIN>
-  });
+  })->info);
 }
 
 1;
