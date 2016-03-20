@@ -13,7 +13,13 @@ sub register {
 
     # TODO: verify that $store and $forward have what's necessary
 
-    my $log = sprintf "%s | %s | %s => %s | %s", $job->id, $forward->{from}, $forward->{'X-Original-To'}, $forward->{to}, $forward->{subject};
+    my $log = sprintf "%s (mail %s) | %s | %s => %s | %s",
+                $job->id,
+                ($app->config->{relay}->{disable} ? 'disabled' : 'enabled'),
+                $forward->{from},
+                $forward->{'X-Original-To'},
+                $forward->{to},
+                $forward->{subject};
 
     my $id = $job->app->model->events->add({  # Database     # Store
       log => $log,
@@ -32,6 +38,11 @@ sub register {
     $job->app->mail(test => $app->config->{relay}->{disable}, %$forward);                   # Forward
 
     $job->finish($log);
+
+    $job->app->pg->pubsub->notify(            # Webbrowser
+      events => sprintf('%s | %s | %s', $job->id, $job->info->{state}, $job->info->{result}), # TODO: pass JSON instead
+    );
+
   });
 }
 

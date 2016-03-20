@@ -8,7 +8,7 @@
 <script>
   var ws  = new ReconnectingWebSocket('<%= url_for('watch')->to_abs %>');
   ws.onmessage = function (e) {
-    document.getElementById('log').innerHTML += '<p>' + e.data + '</p>';
+    document.getElementById('log').innerHTML = '<p>' + e.data + '</p>' + document.getElementById('log').innerHTML;
   };
   function sendChat(input) { ws.send(input.value); input.value = '' }
 </script>

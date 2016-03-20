@@ -11,7 +11,7 @@ sub add {
 
 sub all { shift->pg->db->query('select * from events')->expand->hashes->to_array }
 
-sub tail { shift->pg->db->query('select id,log from events order by id desc limit ?', shift)->hashes->reverse->to_array }
+sub tail { shift->pg->db->query('select id,log from events order by id desc limit ?', shift)->hashes->to_array }
 
 sub find {
   my ($self, $id) = @_;
